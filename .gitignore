@@ -1,1 +1,3 @@
 node_modules
+api/__pychache__/*
+.env
