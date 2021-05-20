@@ -1,4 +1,17 @@
-<!DOCTYPE html>
+<?php
+function curl($type, $data)
+{
+    $cURLConnection = curl_init("http://python:5000/$type");
+    if ($data != NULL) {
+        curl_setopt($cURLConnection, CURLOPT_POSTFIELDS, $data);
+    }
+    curl_setopt($cURLConnection, CURLOPT_RETURNTRANSFER, true);
+    $apiResponse = curl_exec($cURLConnection);
+    curl_close($cURLConnection);
+    return $apiResponse;
+}
+curl("", NULL);
+?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -110,20 +123,22 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form action="#" method="POST">
+                <form method="POST">
+                    <div class="modal-body">
+
                         <div class="form-group">
                             <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Email Address...">
                         </div>
                         <div class="form-group">
                             <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="#">Login</a>
-                </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary" type="submit" href="#">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

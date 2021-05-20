@@ -1,0 +1,5 @@
+uuid
+requests
+Flask
+gunicorn
+azure-storage-blob
