@@ -1,8 +1,9 @@
 try:
+    import azure.storage.blob
     from azure.storage.blob import BlobServiceClient    
-    from azure.storage.blob import ContainerClient
+    from azure.storage.blob import ContainerClient, BlobSasPermissions
     import os
-    import requests
+    from datetime import datetime, timedelta
     from azure.storage.blob import BlobClient
     from flask import Flask, request
     from decouple import config
@@ -26,7 +27,7 @@ def createcontainer():
     try:
         container_client = ContainerClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name=request.args.get('container'))
         container_client.create_container()
-        #return str(f"{request.args.get('container')} created")
+        return str(f"{request.args.get('container')} created")
         
     except Exception as ex:
         return str(ex)
@@ -38,22 +39,21 @@ def uploadplot():
         # SE CORRER NOUTRA MAQUINA
         plot.save(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename)) 
 
-        blob = BlobClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name="my_container", blob_name="my_blob")
+        
+        blob = BlobClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name=request.form.get('container'), blob_name=plot.filename)
 
-        with open("./SampleSource.txt", "rb") as data:
+        with open(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename), "rb") as data:
             blob.upload_blob(data)
         return str("ficheiro guardado")
     return str("ficheiro nao guardado")
 
-@app.route('/teste', methods=['POST'])
-def teste():
-    print("teste")
-    return str("teste")
+@app.route('/generateploturl', methods=['GET'])
+def generateploturl():
+    expiry= datetime.utcnow() + timedelta(days=3)
+    sasToken = azure.storage.blob.generate_blob_sas("chiaplotsjoyn", request.args.get('container'), request.args.get('blob'), snapshot=None, account_key=config('STORAGE_ACC_ACCESS_KEY'), user_delegation_key=None, permission=BlobSasPermissions(read=True, add=False, create=False, write=False, delete=False, delete_previous_version=False, tag=False), expiry=expiry, start=datetime.utcnow(), policy_id=None, ip=None,)
+    
+    return str(f"https://chiaplotsjoyn.blob.core.windows.net/{request.args.get('container')}/{request.args.get('blob')}?{sasToken}")
 
-@app.route('/api')
-def api():
-    print("api")
-    return str("api")
 
 if __name__ == "main":
     app.run(host='0.0.0.0')
