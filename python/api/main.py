@@ -3,6 +3,7 @@ try:
     from azure.storage.blob import ContainerClient
     import os
     import requests
+    from azure.storage.blob import BlobClient
     from flask import Flask, request
     from decouple import config
 except ImportError:
@@ -25,7 +26,8 @@ def createcontainer():
     try:
         container_client = ContainerClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name=request.args.get('container'))
         container_client.create_container()
-        return str(f"{request.args.get('container')} created")
+        #return str(f"{request.args.get('container')} created")
+        
     except Exception as ex:
         return str(ex)
         
@@ -33,7 +35,13 @@ def createcontainer():
 def uploadplot():
     plot = request.files['plot']
     if plot.filename != '':
-        plot.save(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename))
+        # SE CORRER NOUTRA MAQUINA
+        plot.save(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename)) 
+
+        blob = BlobClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name="my_container", blob_name="my_blob")
+
+        with open("./SampleSource.txt", "rb") as data:
+            blob.upload_blob(data)
         return str("ficheiro guardado")
     return str("ficheiro nao guardado")
 
