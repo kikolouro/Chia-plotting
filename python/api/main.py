@@ -1,4 +1,3 @@
-print(__name__)
 try:
     from azure.storage.blob import BlobServiceClient    
     from azure.storage.blob import ContainerClient
@@ -14,21 +13,29 @@ except ImportError:
 credential = config('STORAGE_ACC_ACCESS_KEY')
 service = BlobServiceClient(account_url="https://chiaplotsjoyn.blob.core.windows.net/", credential=credential)
 
-container_client = ContainerClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name="teste2")
-
-container_client.create_container()
-print(container_client)
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif', '.txt']
+app.config['UPLOAD_FOLDER'] = 'plots'
+
+
 
 @app.route('/createcontainer', methods=['GET'])
 def createcontainer():
     try:
         container_client = ContainerClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name=request.args.get('container'))
         container_client.create_container()
+        return str(f"{request.args.get('container')} created")
     except Exception as ex:
         return str(ex)
-    
-
+        
+@app.route('/uploadplot', methods=['POST'])
+def uploadplot():
+    plot = request.files['plot']
+    if plot.filename != '':
+        plot.save(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename))
+        return str("ficheiro guardado")
+    return str("ficheiro nao guardado")
 
 @app.route('/teste', methods=['POST'])
 def teste():

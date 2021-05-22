@@ -3,3 +3,4 @@ requests
 Flask
 gunicorn
 azure-storage-blob
+python-decouple

@@ -1,3 +1,4 @@
 node_modules
-api/__pychache__/*
+python/api/__pychache__
 .env
+python/api/plots
