@@ -50,7 +50,7 @@ services:
       - ./python/api:/app/api
     container_name: api
     ports:
-      - "8000:8000"
+      - "5000:5000"
     restart: always
 networks:
   frontend:

@@ -7,6 +7,8 @@ try:
     from azure.storage.blob import BlobClient
     from flask import Flask, request
     from decouple import config
+    import mysql.connector
+    from flask_cors import CORS
 except ImportError:
     print('Please install required modules: pip install -r requirements.txt')
     exit()
@@ -16,11 +18,23 @@ credential = config('STORAGE_ACC_ACCESS_KEY')
 service = BlobServiceClient(account_url="https://chiaplotsjoyn.blob.core.windows.net/", credential=credential)
 
 app = Flask(__name__)
+CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif', '.txt']
 app.config['UPLOAD_FOLDER'] = 'plots'
 
 
+@app.route('/register', methods=['POST'])
+def register():
+    mydb = mysql.connector.connect(
+            host="mysql",
+            user="root",
+            password=f"{config('DB_ROOT_PASSWORD')}",
+            database=f"{config('DB_NAME')}"
+            )
+    mycursor = mydb.cursor()
+    print(request.form)
+    return str(request.form)
 
 @app.route('/createcontainer', methods=['GET'])
 def createcontainer():
@@ -38,8 +52,6 @@ def uploadplot():
     if plot.filename != '':
         # SE CORRER NOUTRA MAQUINA
         plot.save(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename)) 
-
-        
         blob = BlobClient.from_connection_string(conn_str=config('CONNECT_STRING'), container_name=request.form.get('container'), blob_name=plot.filename)
 
         with open(os.path.join(app.config['UPLOAD_FOLDER'], plot.filename), "rb") as data:

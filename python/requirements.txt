@@ -6,3 +6,5 @@ azure-storage-blob
 python-decouple
 datetime
 timedelta
+mysql.connector
+flask-cors

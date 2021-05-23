@@ -1,5 +1,5 @@
 <?php
-if ($_SESSION['mail']) {
+if ($_SESSION['email']) {
 ?>
     <nav style="background-color: #411a69 !important; " class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -121,7 +121,7 @@ if ($_SESSION['mail']) {
 
             <!-- Nav Item - User Information -->
             <li class="nav-item">
-                <a class="nav-link" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link" href="#" data-toggle="modal" data-target="#registermodal" role="button" aria-haspopup="true" aria-expanded="false">
                     <span class="mr-2 d-none d-lg-inline text-gray-600">Register</span>
                 </a>
             </li>
