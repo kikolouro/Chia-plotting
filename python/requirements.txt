@@ -8,3 +8,4 @@ datetime
 timedelta
 mysql.connector
 flask-cors
+bcrypt
