@@ -18,7 +18,8 @@ except ImportError:
 # https://zetcode.com/python/bcrypt/ --- bcrypt
 
 credential = config('STORAGE_ACC_ACCESS_KEY')
-service = BlobServiceClient(account_url=f"https://{config('STORAGE_ACC_NAME')}.blob.core.windows.net/", credential=credential)
+service = BlobServiceClient(
+    account_url=f"https://{config('STORAGE_ACC_NAME')}.blob.core.windows.net/", credential=credential)
 
 mydb = mysql.connector.connect(
     host="mysql",
@@ -37,8 +38,9 @@ app.config['UPLOAD_FOLDER'] = 'plots'
 
 
 def hashpw(password):
+    passwd = password.encode('utf8')
     salt = bcrypt.gensalt()
-    pw = bcrypt.hashpw(password, salt)
+    pw = bcrypt.hashpw(passwd, salt)
     return pw
 
 
@@ -51,23 +53,22 @@ def checkemail(email):
 
 
 def samepw(pwbd, pwuser):
-    pw = hashpw(pwuser)
-    if bcrypt.checkpw(pwbd, pw):
+    if bcrypt.checkpw(pwbd, pwuser):
         return True
     else:
         return False
 
+
 @app.route('/register', methods=['POST'])
 def register():
     email = request.form.get('email')
-    #sreturn str(mycursor)
-    password = request.form.get('password').encode('utf-8')
+    # sreturn str(mycursor)
+    password = request.form.get('password')
     if checkemail(email):
         pw = hashpw(password)
         sql = f"INSERT INTO users(email, password) VALUES (%s, %s)"
         val = (email, pw.decode('utf8'))
         mycursor.execute(sql, val)
-
         mydb.commit()
         code = {
             "code": "1",
@@ -78,7 +79,8 @@ def register():
             "code": "0",
             "message": "Register incomplete, bad email"
         }
-    return json.dumps(code) 
+    return json.dumps(code)
+
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -86,13 +88,18 @@ def login():
         sql = f"Select * from users where email like '{request.form.get('email')}'"
         mycursor.execute(sql)
         result = mycursor.fetchall()
-        return str(result)
-        #if samepw(request.form.get('loginPassword').encode('uft8'), result[0][3]):
-    else:
-        code = {
-            "code": "0",
-            "message": "Register incomplete, bad email"
-        }
+        code = result[0][3]
+        if samepw(request.form.get('password').encode('utf8'), result[0][3].encode('utf8')):
+            code += str({
+                "code": "1",
+                "message": "Login successful"
+            })
+        else:
+            code += str({
+                "code": "0",
+                "message": "Credentials failed"
+            })
+    return code
 
 
 @app.route('/createcontainer', methods=['GET'])
@@ -129,5 +136,3 @@ def generateploturl():
         read=True, add=False, create=False, write=False, delete=False, delete_previous_version=False, tag=False), expiry=expiry, start=datetime.utcnow(), policy_id=None, ip=None,)
 
     return str(f"https://{config('STORAGE_ACC_NAME')}.blob.core.windows.net/{request.args.get('container')}/{request.args.get('blob')}?{sasToken}")
-
-

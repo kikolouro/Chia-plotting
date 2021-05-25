@@ -1,5 +1,5 @@
 node_modules
-python/api/__pychache__/
+python/api/__pycache__
 .env
 python/api/plots
 mysql-data/

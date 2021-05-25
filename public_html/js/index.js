@@ -11,8 +11,11 @@ function register(email, password) {
         },
         success: function (response) {
             if (response.code == 0) {
+                window.location = "index.php?error=" + response.message
+            }
+            else if (response.code == 1) {
                 window.location = "index.php?message=" + response.message
-            } 
+            }
         },
         error: function (response) {
             alert(JSON.stringify(response))
