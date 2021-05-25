@@ -40,18 +40,21 @@ services:
       MYSQL_USER: "${DB_USERNAME}"
       MYSQL_PASSWORD: "${DB_PASSWORD}"
     container_name: mysql
+    volumes:
+      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql-data:/var/lib/mysql
   api:
     build: 
       context: './python'
     networks:
       - backend
       - frontend
-    volumes:
-      - ./python/api:/app/api
+    volumes: ['./python/api:/app/api']
     container_name: api
     ports:
       - "5000:5000"
     restart: always
+    command: gunicorn --chdir api wsgi:app --reload --timeout 1000 --bind 0.0.0.0:5000
 networks:
   frontend:
   backend:

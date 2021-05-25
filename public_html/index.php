@@ -153,7 +153,7 @@ curl("", NULL);
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form method="POST">
+                <form method="POST" action="#">
                     <div class="modal-body">
 
                         <div class="form-group">
@@ -166,7 +166,7 @@ curl("", NULL);
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <button onclick="login(document.getElementById('registerEmail').value, document.getElementById('registerPassword').value);" class="btn btn-primary" id="submitbutton" type="button">Register</button>
+                        <button onclick="register(document.getElementById('registerEmail').value, document.getElementById('registerPassword').value);" class="btn btn-primary" id="submitbutton" type="button">Register</button>
                     </div>
                 </form>
             </div>

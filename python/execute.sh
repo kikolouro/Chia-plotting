@@ -2,5 +2,6 @@
 
 
 #gunicorn main:app --reload
-gunicorn --chdir api main:app --threads 2 --reload 
-#-b 0.0.0.0:5000
+cd ./api
+gunicorn main:app --reload --timeout 1000 --bind 0.0.0.0:5000
+#

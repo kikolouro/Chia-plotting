@@ -9,10 +9,10 @@ COPY requirements.txt requirements.txt
 
 RUN pip3 install -r requirements.txt
 
-COPY . .
+COPY . /app/
 
-RUN ["chmod", "+x", "./execute.sh"]
+#RUN ["chmod", "+x", "./execute.sh"]
 
-EXPOSE 8000
+EXPOSE 5000
 
-ENTRYPOINT ["./execute.sh"]
+#ENTRYPOINT ["./execute.sh"]
