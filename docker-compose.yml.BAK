@@ -10,9 +10,11 @@ services:
     volumes:
       - ${PROJECT_ROOT}/:/var/www/html/
     container_name: php
-  nginx:
-    image: naveed125/nginx-php-fpm:latest
-    restart: always
+  apache:
+    build:
+      context: './apache/'
+      args:
+       APACHE_VERSION: ${APACHE_VERSION}
     depends_on:
       - php
       - mysql
@@ -21,9 +23,8 @@ services:
       - frontend
       - backend
     volumes:
-      #- ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ${PROJECT_ROOT}/:/var/www/html
-    container_name: nginx
+      - ${PROJECT_ROOT}/:/var/www/html/
+    container_name: apache
     ports:
       - "80:80"
   mysql:

@@ -1,0 +1,7 @@
+FROM nginx
+RUN add-apt-repository universe
+RUN apt update
+RUN apt php-fpm php-mysql
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default /etc/nginx/sites-available/default
