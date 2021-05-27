@@ -1,15 +1,15 @@
 version: "3.2"
 services:
-  php:
-    build: 
-      context: './php/'
-      args:
-       PHP_VERSION: ${PHP_VERSION}
-    networks:
-      - backend
-    volumes:
-      - ${PROJECT_ROOT}/:/var/www/html/
-    container_name: php
+  #php:
+  #  build: 
+  #    context: './php/'
+  #    args:
+  #     PHP_VERSION: ${PHP_VERSION}
+  #  networks:
+  #    - backend
+  #  volumes:
+  #    - ${PROJECT_ROOT}/:/var/www/html/
+  #  container_name: php
   nginx:
     image: naveed125/nginx-php-fpm:latest
     restart: always

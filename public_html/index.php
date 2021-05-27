@@ -10,7 +10,7 @@ function curl($type, $data)
     curl_close($cURLConnection);
     return $apiResponse;
 }
-curl("", NULL);
+echo curl("teste", NULL);
 ?><!DOCTYPE html>
 <html lang="en">
 

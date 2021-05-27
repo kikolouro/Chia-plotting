@@ -81,6 +81,9 @@ def register():
         }
     return json.dumps(code)
 
+@app.route('/teste')
+def teste():
+    return str("teste")
 
 @app.route('/login', methods=["POST"])
 def login():
