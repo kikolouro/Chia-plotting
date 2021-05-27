@@ -12,10 +12,11 @@ try:
     import mysql.connector
     from flask_cors import CORS
     import re
+    import uuid
 except ImportError:
     print('Please install required modules: pip install -r requirements.txt')
     exit()
-# https://zetcode.com/python/bcrypt/ --- bcrypt
+
 
 credential = config('STORAGE_ACC_ACCESS_KEY')
 service = BlobServiceClient(
@@ -81,9 +82,6 @@ def register():
         }
     return json.dumps(code)
 
-@app.route('/teste')
-def teste():
-    return str("teste")
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -91,18 +89,25 @@ def login():
         sql = f"Select * from users where email like '{request.form.get('email')}'"
         mycursor.execute(sql)
         result = mycursor.fetchall()
-        code = result[0][3]
         if samepw(request.form.get('password').encode('utf8'), result[0][3].encode('utf8')):
-            code += str({
+            with open(f"tokens/{request.form.get('email')}.txt", "w") as File:
+                token = uuid.uuid1().hex
+                File.write(token)
+            sql = f"Select email, id, token, publickey, poolkey from users where email like '{request.form.get('email')}'"
+            mycursor.execute(sql)
+            result = mycursor.fetchall()
+            code = str({
                 "code": "1",
-                "message": "Login successful"
+                "message": "Login successful",
+                "token": token,
+                "data": result
             })
         else:
-            code += str({
+            code = str({
                 "code": "0",
                 "message": "Credentials failed"
             })
-    return code
+    return json.dumps(code)
 
 
 @app.route('/createcontainer', methods=['GET'])

@@ -3,3 +3,4 @@ python/api/__pycache__
 .env
 python/api/plots
 mysql-data/
+python/api/tokens
