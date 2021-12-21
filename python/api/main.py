@@ -41,23 +41,16 @@ app.config['UPLOAD_FOLDER'] = 'plots'
 def hashpw(password):
     passwd = password.encode('utf8')
     salt = bcrypt.gensalt()
-    pw = bcrypt.hashpw(passwd, salt)
-    return pw
+    return bcrypt.hashpw(passwd, salt)
 
 
 def checkemail(email):
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-    if(re.search(regex, email)):
-        return True
-    else:
-        return False
+    return bool((re.search(regex, email)))
 
 
 def samepw(pwbd, pwuser):
-    if bcrypt.checkpw(pwbd, pwuser):
-        return True
-    else:
-        return False
+    return bool(bcrypt.checkpw(pwbd, pwuser))
 
 
 @app.route('/register', methods=['POST'])
@@ -67,7 +60,7 @@ def register():
     password = request.form.get('password')
     if checkemail(email):
         pw = hashpw(password)
-        sql = f"INSERT INTO users(email, password) VALUES (%s, %s)"
+        sql = 'INSERT INTO users(email, password) VALUES (%s, %s)'
         val = (email, pw.decode('utf8'))
         mycursor.execute(sql, val)
         mydb.commit()
